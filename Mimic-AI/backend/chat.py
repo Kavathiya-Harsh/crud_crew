@@ -3,7 +3,7 @@ Real-time chat Socket.IO event handlers.
 Handles messaging, online status, typing indicators, and AI stand-in triggers.
 """
 
-from flask import session
+from flask import session, request
 from flask_socketio import emit, join_room, leave_room
 from models import (
     save_message, get_chat_history, get_user_by_id,
@@ -15,6 +15,7 @@ import time
 
 # Track connected users: { user_id: sid }
 connected_users = {}
+sid_to_user = {}
 
 
 def get_room_name(user1_id, user2_id):
@@ -29,18 +30,17 @@ def register_socket_events(socketio):
     @socketio.on('connect')
     def handle_connect(auth=None):
         """Handle user connection."""
-        user_id = session.get('user_id')
-
-        # Fallback: use auth data if session cookie is not available (cross-origin deploy)
-        if not user_id and auth:
+        user_id = None
+        if auth:
             user_id = auth.get('user_id')
-            if user_id:
-                session['user_id'] = user_id
+        if not user_id:
+            user_id = session.get('user_id')
 
         if not user_id:
             return False  # Reject connection
 
-        connected_users[user_id] = True
+        sid_to_user[request.sid] = user_id
+        connected_users[user_id] = request.sid
         set_user_online(user_id, True)
 
         # Broadcast online status to all
@@ -56,7 +56,7 @@ def register_socket_events(socketio):
     @socketio.on('disconnect')
     def handle_disconnect():
         """Handle user disconnection."""
-        user_id = session.get('user_id')
+        user_id = sid_to_user.pop(request.sid, None)
         if not user_id:
             return
 
@@ -77,7 +77,7 @@ def register_socket_events(socketio):
     @socketio.on('join_chat')
     def handle_join_chat(data):
         """Join a private chat room between two users."""
-        user_id = session.get('user_id')
+        user_id = sid_to_user.get(request.sid)
         if not user_id:
             return
 
@@ -100,7 +100,7 @@ def register_socket_events(socketio):
     @socketio.on('leave_chat')
     def handle_leave_chat(data):
         """Leave a private chat room."""
-        user_id = session.get('user_id')
+        user_id = sid_to_user.get(request.sid)
         if not user_id:
             return
 
@@ -114,7 +114,7 @@ def register_socket_events(socketio):
     @socketio.on('send_message')
     def handle_send_message(data):
         """Handle sending a message."""
-        user_id = session.get('user_id')
+        user_id = sid_to_user.get(request.sid)
         if not user_id:
             return
 
@@ -178,7 +178,7 @@ def register_socket_events(socketio):
     @socketio.on('typing')
     def handle_typing(data):
         """Broadcast typing indicator."""
-        user_id = session.get('user_id')
+        user_id = sid_to_user.get(request.sid)
         if not user_id:
             return
 
@@ -200,7 +200,7 @@ def register_socket_events(socketio):
     @socketio.on('toggle_ai_standin')
     def handle_toggle_ai(data):
         """Toggle AI stand-in for the current user."""
-        user_id = session.get('user_id')
+        user_id = sid_to_user.get(request.sid)
         if not user_id:
             return
 
@@ -219,7 +219,7 @@ def register_socket_events(socketio):
     @socketio.on('get_contacts')
     def handle_get_contacts():
         """Get all users as contacts with their online status."""
-        user_id = session.get('user_id')
+        user_id = sid_to_user.get(request.sid)
         if not user_id:
             return
 
