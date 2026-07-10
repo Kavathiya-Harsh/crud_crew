@@ -84,7 +84,7 @@ export default function ChatPage() {
   useEffect(() => {
     if (!currentUser) return;
 
-    const sock = io({
+    const sock = io(import.meta.env.VITE_API_URL || '', {
       withCredentials: true,
       transports: ['polling', 'websocket'],
       reconnectionAttempts: 10,
@@ -180,7 +180,7 @@ export default function ChatPage() {
       sock.disconnect();
       socketRef.current = null;
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
   // Actions
@@ -237,11 +237,11 @@ export default function ChatPage() {
   const getInitials = (name) => {
     return name
       ? name
-          .split(' ')
-          .map((w) => w[0])
-          .join('')
-          .toUpperCase()
-          .substring(0, 2)
+        .split(' ')
+        .map((w) => w[0])
+        .join('')
+        .toUpperCase()
+        .substring(0, 2)
       : 'U';
   };
 
