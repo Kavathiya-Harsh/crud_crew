@@ -19,11 +19,11 @@ app = Flask(__name__, static_folder=None)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'chatapp-secret-key-change-in-production')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
 
-CORS(app, supports_credentials=True)
+CORS(app, supports_credentials=True, origins=["http://localhost:5173", "https://crud-crew.vercel.app"])
 
 socketio = SocketIO(
     app,
-    cors_allowed_origins="*",
+    cors_allowed_origins=["http://localhost:5173", "https://crud-crew.vercel.app"],
     async_mode='eventlet',
     manage_session=False,
     ping_timeout=60,
