@@ -1,0 +1,27 @@
+import { motion } from 'framer-motion'
+import { ArrowRight, Check, FileText, Send, Sparkles, WandSparkles } from 'lucide-react'
+import './Hero.css'
+
+function Dashboard() {
+  return <div className="dashboard-position"><motion.div className="dashboard" initial={{opacity: 0, y: 32, rotateX: 7}} animate={{opacity: 1, y: 0, rotateX: 0}} transition={{delay: .28, duration: .8}}>
+    <div className="dash-top"><span className="tiny-logo"><Sparkles size={12}/></span><span>mimic / your voice</span><i></i><b></b><b></b><b></b></div>
+    <div className="dash-body"><aside><span className="side-active">✦ &nbsp; Clone</span><span>◌ &nbsp; Profile</span><span>◫ &nbsp; History</span><em>⌘ K</em></aside><section className="dash-content">
+      <p className="eyebrow">YOUR DIGITAL CLONE</p><h3>Hey, CRUD_CREW <span>✦</span></h3><p className="dash-copy">Your voice model is ready to help.</p>
+      <div className="message incoming"><span>AM</span><div><small>Alex · 10:42 AM</small><p>are we still on for lunch?</p></div></div>
+      <div className="thinking"><WandSparkles size={14}/> Mimic is thinking in your voice <i></i><i></i><i></i></div>
+      <div className="message reply"><span>H</span><div><small>You, via Mimic · now</small><p>yesss! running a tiny bit late but i'll be there 🙌</p><div className="reply-actions"><button>Regenerate</button><button>Copy</button><button className="send"><Send size={12}/> Send</button></div></div></div>
+    </section></div>
+  </motion.div></div>
+}
+
+export default function Hero() {
+  return <section id="top" className="hero"><div className="hero-grid"></div><div className="orb orb-one"></div><div className="orb orb-two"></div>
+    <div className="container hero-layout"><div className="hero-copy">
+      <motion.div className="pill" initial={{opacity:0, y:10}} animate={{opacity:1,y:0}}><span></span> YOUR VOICE, REIMAGINED</motion.div>
+      <motion.h1 initial={{opacity:0,y:18}} animate={{opacity:1,y:0}} transition={{delay:.1}}>Your voice.<br/><em>Everywhere.</em></motion.h1>
+      <motion.p initial={{opacity:0,y:18}} animate={{opacity:1,y:0}} transition={{delay:.18}}>Mimic learns how you communicate — your tone, your rhythm, your little quirks — and helps you stay present, even when life gets busy.</motion.p>
+      <motion.div className="hero-actions" initial={{opacity:0,y:18}} animate={{opacity:1,y:0}} transition={{delay:.25}}><a className="primary-button" href="#start">Create your digital clone <ArrowRight size={18}/></a><a className="text-button" href="#how-it-works">See how it works <span>↓</span></a></motion.div>
+      <div className="trust"><div className="avatars"><b>J</b><b>M</b><b>S</b><b>A</b></div><span>Trusted by <strong>2,000+</strong> early creators</span></div>
+    </div><div className="hero-visual"><Dashboard /><div className="float-card profile-card"><span>✦</span><div><small>VOICE PROFILE</small><b>Warm & witty</b></div><Check size={15}/></div><div className="float-card training-card"><div className="pulse"></div><div><small>TRAINING COMPLETE</small><b>2,847 messages learned</b></div></div></div></div>
+  </section>
+}
